@@ -1,0 +1,1267 @@
+-- Zane Mazor-Brown & Ivan Dikov
+-- Combined scripts from tasks 1-6
+
+DROP TABLE Customer CASCADE CONSTRAINTS PURGE;
+
+DROP TABLE Preferences CASCADE CONSTRAINTS PURGE;
+
+DROP TABLE Employee CASCADE CONSTRAINTS PURGE;
+
+DROP TABLE Service CASCADE CONSTRAINTS PURGE;
+
+DROP TABLE Warranty CASCADE CONSTRAINTS PURGE;
+
+DROP TABLE Artwork_Item_Sale CASCADE CONSTRAINTS PURGE;
+
+DROP TABLE Artwork_Item_Service CASCADE CONSTRAINTS PURGE;
+
+DROP TABLE Artist CASCADE CONSTRAINTS PURGE;
+
+DROP TABLE Vendor CASCADE CONSTRAINTS PURGE;
+
+DROP TABLE Purchase_Agreement CASCADE CONSTRAINTS PURGE;
+
+DROP TABLE Consignment_Agreement CASCADE CONSTRAINTS PURGE;
+
+DROP TABLE Sales_Invoice CASCADE CONSTRAINTS PURGE;
+
+DROP TABLE Service_Invoice CASCADE CONSTRAINTS PURGE;
+
+
+
+
+
+CREATE TABLE Customer (
+    Customer_ID NUMBER(6),
+    Customer_LastName VARCHAR2(20) NOT NULL,
+    Customer_FirstName VARCHAR2(20) NOT NULL,
+    Customer_StreetAddress VARCHAR2(50) NOT NULL,
+    Customer_City VARCHAR2(20) NOT NULL,
+    Customer_State VARCHAR2(2) DEFAULT'CA' NOT NULL,
+    Customer_Zipcode NUMBER(5) NOT NULL,
+    Customer_PhoneNumber CHAR(10) NOT NULL UNIQUE,
+    Customer_Email VARCHAR2(40) NOT NULL UNIQUE,
+    CONSTRAINT cust_custID_pk PRIMARY KEY (Customer_ID),
+);
+
+
+
+CREATE TABLE Preferences (
+    Preference_ID NUMBER(6),
+    Artist_Type VARCHAR2(20),
+    Artist_FirstName VARCHAR2(20),
+    Artist_LastName VARCHAR(20),
+    Preference_Description VARCHAR2(300),
+    Preference_StartDate DATE DEFAULT SYSDATE NOT NULL,
+    Preference_EndDate DATE,
+    Customer_ID NUMBER(6) NOT NULL,
+    CONSTRAINT prefs_EDbeforeSD_ck CHECK (Preference_EndDate > Preference_StartDate),
+    CONSTRAINT prefs_preID_pk PRIMARY KEY (Preference_ID),
+    CONSTRAINT cust_custID_fk FOREIGN KEY (Customer_ID)
+    REFERENCES Customer (Customer_ID)
+);
+
+
+
+INSERT INTO Customer (Customer_ID, Customer_LastName, Customer_FirstName, Customer_StreetAddress,
+Customer_City, Customer_Zipcode, Customer_PhoneNumber, Customer_Email)
+VALUES (390138, 'Brown', 'Bob', '4321 Higuera St.', 'San Luis Obispo', 93401, 8056893298, 'bobbrown@gmail.com');
+
+INSERT INTO Customer (Customer_ID, Customer_LastName, Customer_FirstName, Customer_StreetAddress,
+Customer_City, Customer_Zipcode, Customer_PhoneNumber, Customer_Email)
+VALUES (345987, 'Cobb', 'Allie', '452 Santa Rosa St.', 'San Luis Obispo', 93401, 8051344928, 'acobb22@hotmail.com');
+
+INSERT INTO Customer (Customer_ID, Customer_LastName, Customer_FirstName, Customer_StreetAddress,
+Customer_City, Customer_Zipcode, Customer_PhoneNumber, Customer_Email)
+VALUES (429844, 'Smith', 'John', '1234 State St.', 'San Luis Obispo', 93401, 8051234567, 'johnsmith@gmail.com');
+
+INSERT INTO Customer (Customer_ID, Customer_LastName, Customer_FirstName, Customer_StreetAddress,
+Customer_City, Customer_Zipcode, Customer_PhoneNumber, Customer_Email)
+VALUES (098145, 'MacDonald', 'Amy', '812 10th St.', 'Santa Monica', 90291, 8059320134, 'amymacdonald@calpoly.edu');
+
+INSERT INTO Customer (Customer_ID, Customer_LastName, Customer_FirstName, Customer_StreetAddress,
+Customer_City, Customer_Zipcode, Customer_PhoneNumber, Customer_Email)
+VALUES (234985, 'Cooke', 'Katie', '7021 Diana Rd.', 'Santa Barbara', 93103, '2068573912', 'kcooke12321@gmail.com');
+
+
+
+
+
+
+INSERT INTO Customer
+VALUES (229304, 'Jimothy', 'Janiels', '1001 Sert Blvd.', 'San Antonio', 'TX', 21949, 3449330092, 'jjaniels@gmail.com');
+
+INSERT INTO Customer
+VALUES (329325, 'Manmulch', 'Jeremy', '934 Bongo St.', 'New Haven', 'CT', 12903, 3332019002, 'jmulcher@gmail.com');
+
+INSERT INTO Customer
+VALUES (240884, 'Matmer', 'Tyler', '39 Locust Rd.', 'Hogtown', 'AL', 94560, 3201992533, 'tmatman@gmail.com');
+
+INSERT INTO Customer
+VALUES (969212, 'Slapclap', 'Horton', '291 Elephant Dr.', 'Snowball', 'AK', 94549, 2093933019, 'slapclapperh@gmail.com');
+
+INSERT INTO Customer
+VALUES (100248, 'Murgenstein', 'Monica', '988 Carol St.', 'Walnut Creek', 'ME', 86649, 999023201, 'mmurgen@gmail.com');
+
+
+
+
+INSERT INTO Preferences (Preference_ID, Artist_Type, Artist_FirstName, Artist_LastName, Preference_Description, Preference_EndDate, Customer_ID)
+VALUES (345874, 'Painting', 'Pablo', 'Picasso', 'Prefers the early works of Pablo Picasso', to_date('27-FEB-2022','dd-mon-yyyy'), 429844);
+
+INSERT INTO Preferences (Preference_ID, Artist_Type, Artist_LastName, Artist_FirstName, Preference_Description, Preference_EndDate, Customer_ID)
+VALUES (109943, 'Sculpture', 'Canova', 'Antonio', 'Prefers Canova style Neoclassical sculptures from the late 18th century', to_date('11-JAN-2022','dd-mon-yyyy'), 429844);
+
+INSERT INTO Preferences (Preference_ID, Artist_Type, Artist_LastName, Artist_FirstName, Preference_Description, Preference_EndDate, Customer_ID)
+VALUES (903846, 'Ceramic', 'Bardi', 'Donatello', 'Prefers Donatello style of Early Renaissance in Italy', NULL, 429844);
+
+
+
+
+INSERT INTO Preferences (Preference_ID, Artist_Type, Artist_LastName, Artist_FirstName, Preference_Description, Preference_EndDate, Customer_ID)
+VALUES (387498, 'Painting', 'Warhol', 'Andy', 'Prefers modern and commercial styles of abstract expressionism', to_date('03-JAN-2023','dd-mon-yyyy'), 345987);
+
+INSERT INTO Preferences (Preference_ID, Artist_Type, Artist_LastName, Artist_FirstName, Preference_Description, Preference_EndDate, Customer_ID)
+VALUES (674859, 'Sculpture', 'Simoni', 'Michelangelo', 'Prefers Renaissance sculptures in the style of Michelangelo', NULL, 345987);
+
+
+
+
+INSERT INTO Preferences (Preference_ID, Artist_Type, Artist_LastName, Artist_FirstName, Preference_Description, Preference_EndDate, Customer_ID)
+VALUES (039894, 'Painting', 'Van Gogh', 'Vincent', 'Prefers 1800s post-impressionism style of Van Gogh', to_date('30-DEC-2023','dd-mon-yyyy'), 390138);
+
+INSERT INTO Preferences (Preference_ID, Artist_Type, Artist_LastName, Artist_FirstName, Preference_Description, Preference_EndDate, Customer_ID)
+VALUES (967932, 'Sculpture', 'Simoni', 'Michelangelo', 'Prefers Renaissance sculptures in the style of Michelangelo', to_date('29-OCT-2021','dd-mon-yyyy'), 098145);
+
+INSERT INTO Preferences (Preference_ID, Artist_Type, Artist_LastName, Artist_FirstName, Preference_Description, Preference_EndDate, Customer_ID)
+VALUES (748494, 'Ceramics', 'Volukos', 'Peter', 'Prefers pottery in the style of Peter Volukos and other Greek American potters', NULL, 234985);
+
+
+
+
+CREATE VIEW tsk1_qry_a AS
+SELECT Customer_FirstName, Customer_LastName, Customer_StreetAddress, Customer_City, 
+Customer_State, Customer_PhoneNumber, Customer_Email
+FROM Customer
+ORDER BY Customer_LastName ASC;
+
+CREATE VIEW tsk1_qry_b AS
+SELECT Customer.Customer_FirstName, Customer.Customer_LastName, Customer.Customer_PhoneNumber, 
+Preferences.Artist_Type, Preferences.Artist_FirstName, Preferences.Artist_LastName,
+Preferences.Preference_StartDate, Preferences.Preference_EndDate
+FROM Customer
+RIGHT JOIN Preferences ON Customer.Customer_ID=Preferences.Customer_ID;
+
+CREATE VIEW tsk1_qry_c AS
+SELECT Customer.Customer_FirstName, Customer.Customer_LastName, Customer.Customer_PhoneNumber, 
+NVL (Preferences.Artist_Type,'No Preference') "Art_Type", Preferences.Artist_FirstName, 
+Preferences.Artist_LastName, Preferences.Preference_StartDate, Preferences.Preference_EndDate
+FROM Preferences
+RIGHT JOIN Customer ON Preferences.Customer_ID=Customer.Customer_ID;
+
+-- TASK2
+
+
+CREATE TABLE Employee (
+    Employee_ID NUMBER(4),
+    Managers_ID NUMBER(4),
+    Employee_LastName VARCHAR2(20) NOT NULL,
+    Employee_FirstName VARCHAR2(20) NOT NULL,
+    Employee_StreetAddress VARCHAR2(50) NOT NULL,
+    Employee_City VARCHAR2(20) NOT NULL,
+    Employee_State VARCHAR2(2) DEFAULT'CA' NOT NULL,
+    Employee_Zipcode NUMBER(5) NOT NULL,
+    Employee_PhoneNumber NUMBER(10) NOT NULL,
+    Employee_Email VARCHAR(40) NOT NULL,
+    Employee_HireDate Date,
+    Employee_Title VARCHAR(50) NOT NULL,
+    Employee_Salary NUMBER(7) NOT NULL,
+    Sales_Commission NUMBER(2) DEFAULT 0 NOT NULL,
+    SubTypeSalesPerson CHAR(1) NOT NULL CHECK (SubTypeSalesPerson IN ('Y','N')),
+    SubTypeServicePerson CHAR(1) NOT NULL CHECK (SubTypeServicePerson IN ('Y','N')),
+    SubTypeManager CHAR(1) NOT NULL CHECK (SubTypeManager IN ('Y','N')),
+    CONSTRAINT emp_empID_pk PRIMARY KEY (Employee_ID),
+    UNIQUE (Employee_PhoneNumber, Employee_Email),
+    CONSTRAINT EntA_Attr_CK CHECK (
+    (SubTypeSalesPerson = 'Y' AND SubTypeServicePerson = 'N' AND SubTypeManager = 'N' AND Sales_Commission IS NOT NULL) OR
+    (SubTypeSalesPerson = 'N' AND SubTypeServicePerson = 'Y' AND SubTypeManager = 'N' AND Sales_Commission = 0) OR
+    (SubTypeSalesPerson = 'N' AND SubTypeServicePerson = 'N' AND SubTypeManager = 'Y' AND Sales_Commission = 0) OR
+    (SubTypeSalesPerson = 'Y' AND SubTypeServicePerson = 'Y' AND SubTypeManager = 'N' AND Sales_Commission IS NOT NULL) OR
+    (SubTypeSalesPerson = 'N' AND SubTypeServicePerson = 'Y' AND SubTypeManager = 'Y' AND Sales_Commission = 0) OR
+    (SubTypeSalesPerson = 'Y' AND SubTypeServicePerson = 'N' AND SubTypeManager = 'Y' AND Sales_Commission IS NOT NULL) OR
+    (SubTypeSalesPerson = 'Y' AND SubTypeServicePerson = 'Y' AND SubTypeManager = 'Y' AND Sales_Commission IS NOT NULL) OR
+    (SubTypeSalesPerson = 'N' AND SubTypeServicePerson = 'N' AND SubTypeManager = 'N' AND Sales_Commission= 0)
+    )
+);
+
+
+
+
+INSERT INTO Employee(Employee_ID, Employee_LastName, Employee_FirstName, Employee_StreetAddress, Employee_City, Employee_State, Employee_Zipcode, Employee_PhoneNumber, Employee_Email,
+ Employee_HireDate, Employee_Title, Employee_Salary, Sales_Commission, SubTypeSalesPerson, SubTypeServicePerson, SubtypeManager, Managers_ID)
+VALUES(1000, 'Martini', 'Leonard', '1245 Oceanaire Blvd.', 'San Luis Obispo', 'CA', 93401, 4533450902, 'mleonard@gmail.com', to_date('11-FEB-1984','dd-mon-yyyy'), 'OWNER', 200000, 0, 'Y', 'N', 'Y', NULL);
+
+INSERT INTO Employee(Employee_ID, Employee_LastName, Employee_FirstName, Employee_StreetAddress, Employee_City, Employee_Zipcode, Employee_PhoneNumber, Employee_Email,
+ Employee_HireDate, Employee_Title, Employee_Salary, SubTypeSalesPerson, SubTypeServicePerson, SubtypeManager, Managers_ID)
+VALUES(1001, 'Cruise', 'George', '12 Banana St.', 'San Luis Obispo', 93405, 4539831894, 'gcruiser22@gmail.com', to_date('20-MAY-1995','dd-mon-yyyy'), 'CPA', 150000, 'N', 'N', 'N', 1000);
+
+INSERT INTO Employee(Employee_ID, Employee_LastName, Employee_FirstName, Employee_StreetAddress, Employee_City, Employee_Zipcode, Employee_PhoneNumber, Employee_Email,
+ Employee_HireDate, Employee_Title, Employee_Salary, SubTypeSalesPerson, SubTypeServicePerson, SubtypeManager, Managers_ID)
+VALUES(1002, 'Rambleson', 'Ellen', '45 Bonobo St.', 'Lafayette', 94549, 9253930011, 'eramble89@gmail.com', to_date('12-DEC-1997','dd-mon-yyyy'), 'Framing and Services Assistant Manager', 150000, 'N', 'Y', 'Y', 1000);
+
+INSERT INTO Employee(Employee_ID, Employee_LastName, Employee_FirstName, Employee_StreetAddress, Employee_City, Employee_State, Employee_Zipcode, Employee_PhoneNumber, Employee_Email,
+ Employee_HireDate, Employee_Title, Employee_Salary, Sales_Commission, SubTypeSalesPerson, SubTypeServicePerson, SubtypeManager, Managers_ID)
+VALUES(1003, 'McMaster', 'Mary', '7161 Greenview St.', 'Oceano', 'CA', 93445, 9384740393, 'mcmaster203@gmail.com', to_date('30-AUG-2001','dd-mon-yyyy'), 'Sales Assistant Manager', 145000, 25, 'Y', 'N', 'Y', 1000);
+
+INSERT INTO Employee(Employee_ID, Employee_LastName, Employee_FirstName, Employee_StreetAddress, Employee_City, Employee_State, Employee_Zipcode, Employee_PhoneNumber, Employee_Email,
+ Employee_HireDate, Employee_Title, Employee_Salary, Sales_Commission, SubTypeSalesPerson, SubTypeServicePerson, SubtypeManager, Managers_ID)
+VALUES(1004, 'McManus', 'Alex', '6 Bald Hill St.', 'San Luis Obispo', 'CA', 92645, 3029388473, 'mcmanus@gmail.com', to_date('01-MAR-2007','dd-mon-yyyy'), 'Maintenance', 100000, 0, 'N', 'N', 'N', 1001);
+
+INSERT INTO Employee(Employee_ID, Employee_LastName, Employee_FirstName, Employee_StreetAddress, Employee_City, Employee_Zipcode, Employee_PhoneNumber, Employee_Email,
+ Employee_HireDate, Employee_Title, Employee_Salary, Sales_Commission, SubTypeSalesPerson, SubTypeServicePerson, SubtypeManager, Managers_ID)
+VALUES(1005, 'Wood', 'Alan', '995 Logan St.', 'Bakersfield', 90285, 9083294332, 'awood55@gmail.com', to_date('15-DEC-1997','dd-mon-yyyy'), 'Framing Tech', 115000, 0, 'N', 'Y', 'N', 1002);
+
+INSERT INTO Employee(Employee_ID, Employee_LastName, Employee_FirstName, Employee_StreetAddress, Employee_City, Employee_State, Employee_Zipcode, Employee_PhoneNumber, Employee_Email,
+ Employee_HireDate, Employee_Title, Employee_Salary, Sales_Commission, SubTypeSalesPerson, SubTypeServicePerson, SubtypeManager, Managers_ID)
+VALUES(1006, 'Foster', 'Allen', '438 Deerfield St.', 'Colton', 'CA', 56845, 3855443032, 'afost2034@gmail.com', to_date('05-MAY-1990','dd-mon-yyyy'), 'Sales Associate', 120000, 22, 'Y', 'N', 'N', 1003);
+
+INSERT INTO Employee(Employee_ID, Employee_LastName, Employee_FirstName, Employee_StreetAddress, Employee_City, Employee_State, Employee_Zipcode, Employee_PhoneNumber, Employee_Email,
+ Employee_HireDate, Employee_Title, Employee_Salary, Sales_Commission, SubTypeSalesPerson, SubTypeServicePerson, SubtypeManager, Managers_ID)
+VALUES(1007, 'Smith', 'Kathy', '66 Belmont St.', 'Hawthorne', 'CA', 10945, 2093847484, 'smithkat333@gmail.com', to_date('20-OCT-2010','dd-mon-yyyy'), 'AR/AP Clerk', 125000, 0, 'N', 'N', 'N', 1001);
+
+INSERT INTO Employee(Employee_ID, Employee_LastName, Employee_FirstName, Employee_StreetAddress, Employee_City, Employee_State, Employee_Zipcode, Employee_PhoneNumber, Employee_Email,
+ Employee_HireDate, Employee_Title, Employee_Salary, Sales_Commission, SubTypeSalesPerson, SubTypeServicePerson, SubtypeManager, Managers_ID)
+VALUES(1008, 'Garcia', 'Alonzo', '461 Gregory Rd.', 'San Pedro', 'CA', 93562, 1932175323, 'ga23442@gmail.com', to_date('25-NOV-2005','dd-mon-yyyy'), 'Packing/Shipping Tech', 125000, 0, 'N', 'Y', 'N', 1002);
+
+INSERT INTO Employee(Employee_ID, Employee_LastName, Employee_FirstName, Employee_StreetAddress, Employee_City, Employee_State, Employee_Zipcode, Employee_PhoneNumber, Employee_Email,
+ Employee_HireDate, Employee_Title, Employee_Salary, Sales_Commission, SubTypeSalesPerson, SubTypeServicePerson, SubtypeManager, Managers_ID)
+VALUES(1009, 'St. James', 'Brenda', '1000 Dags Rd.', 'Arroyo Grande', 'CA', 84309, 3945843093, 'stjamesbrend232@gmail.com', to_date('05-MAR-2004','dd-mon-yyyy'), 'Sales Associate', 120000, 24, 'Y', 'N', 'N', 1003);
+
+INSERT INTO Employee(Employee_ID, Employee_LastName, Employee_FirstName, Employee_StreetAddress, Employee_City, Employee_State, Employee_Zipcode, Employee_PhoneNumber, Employee_Email,
+ Employee_HireDate, Employee_Title, Employee_Salary, Sales_Commission, SubTypeSalesPerson, SubTypeServicePerson, SubtypeManager, Managers_ID)
+VALUES(1010, 'Sophomore', 'Sherry', '390 Burk St.', 'Venture', 'CA', 89537, 5398324823, 'sherrywine324@gmail.com', to_date('11-MAY-2019','dd-mon-yyyy'), 'Cal Poly Intern', 35000, 0, 'N', 'N', 'N', 1008);
+
+
+
+CREATE VIEW tsk2_qry_a AS
+SELECT Employee_FirstName, Employee_LastName, Employee_PhoneNumber, Employee_Email
+FROM Employee
+ORDER BY Employee_LastName ASC;
+
+
+
+CREATE VIEW tsk2_qry_b AS
+SELECT emp.Employee_FirstName || ' ' || emp.Employee_LastName "Employee Name",
+mgr.Employee_FirstName || ' ' || mgr.Employee_LastName "Supervisor Name"
+FROM employee emp, employee mgr
+WHERE emp.Managers_ID = mgr.Employee_ID;
+
+
+-- TASK3
+
+
+CREATE TABLE Service (
+    Service_ID NUMBER(4),
+    Service_Description VARCHAR2(50) NOT NULL,
+    Service_Price NUMBER(10) NOT NULL,
+    Service_Cost NUMBER(10) NOT NULL,
+    Service_ProfitMargin AS (Service_Price - Service_Cost),
+    CONSTRAINT srvce_srvceID_pk PRIMARY KEY (Service_ID),
+    CONSTRAINT srvce_srvceprce_chk CHECK (Service_Price >= 0),
+    CONSTRAINT srvce_srvcecst_chk CHECK (Service_Cost >= 0),
+    CONSTRAINT srvce_srvceoffrd_chk CHECK (Service_Description IN ('Cleaning Small', 'Cleaning Large', 'Framing Small', 'Framing Large', 'Picture Mounting Small', 'Picture Mounting Large', 'Cleaning Medium', 'Framing Medium', 'Picture Mounting Medium', 'Lighting Installation Small'))
+);
+
+
+CREATE TABLE Warranty (
+    Warranty_ID NUMBER(4),
+    Warranty_Term VARCHAR2(300) NOT NULL,
+    Warranty_Price NUMBER(10) NOT NULL,
+    CONSTRAINT wrnty_wrntyID_pk PRIMARY KEY (Warranty_ID),
+    CONSTRAINT wrnty_wrntyprce_chk CHECK (Warranty_Price >= 0)
+);
+
+
+INSERT INTO Service (Service_ID, Service_Description, Service_Price, Service_Cost)
+VALUES (1001, 'Cleaning Small', 75, 25);
+
+INSERT INTO Service (Service_ID, Service_Description, Service_Price, Service_Cost)
+VALUES(1002, 'Cleaning Large', 150, 55);
+
+INSERT INTO Service (Service_ID, Service_Description, Service_Price, Service_Cost)
+VALUES (1003, 'Framing Small', 200, 75);
+
+INSERT INTO Service (Service_ID, Service_Description, Service_Price, Service_Cost)
+VALUES (1004, 'Framing Large', 400, 140);
+
+INSERT INTO Service (Service_ID, Service_Description, Service_Price, Service_Cost)
+VALUES (1005, 'Picture Mounting Small', 50, 20);
+
+INSERT INTO Service (Service_ID, Service_Description, Service_Price, Service_Cost)
+VALUES(1006, 'Picture Mounting Large', 100, 30);
+
+INSERT INTO Service (Service_ID, Service_Description, Service_Price, Service_Cost)
+VALUES(1007, 'Cleaning Medium', 100, 40);
+
+INSERT INTO Service (Service_ID, Service_Description, Service_Price, Service_Cost)
+VALUES(1008, 'Framing Medium', 300, 110);
+
+INSERT INTO Service (Service_ID, Service_Description, Service_Price, Service_Cost)
+VALUES(1009, 'Picture Mounting Medium', 80, 25);
+
+INSERT INTO Service (Service_ID, Service_Description, Service_Price, Service_Cost)
+VALUES(1010, 'Lighting Installation Small', 500, 125);
+
+
+
+INSERT INTO Warranty
+VALUES (1000, 3, 150);
+
+INSERT INTO Warranty
+VALUES (1001, 5, 225);
+
+INSERT INTO Warranty
+VALUES (1002, 7, 300);
+
+
+
+
+CREATE VIEW tsk3_qry_a AS
+SELECT Service_ID, Service_Description "Description",
+TO_CHAR (Service_Cost, '$999,999,999.99') "Cost",
+TO_CHAR (Service_Price, '$999,999,999.99') "Price",
+TO_CHAR (Service_ProfitMargin, '$999,999,999.99') "Profit Margin"
+FROM Service
+ORDER BY Service_ID ASC;
+
+
+CREATE VIEW tsk3_qry_b AS
+SELECT Service_ID, Service_Description "Description",
+TO_CHAR (Service_Cost, '$999,999,999.99') "Cost",
+TO_CHAR (Service_Price, '$999,999,999.99') "Price",
+TO_CHAR (Service_ProfitMargin, '$999,999,999.99') "Profit Margin"
+FROM Service
+ORDER BY Service_ProfitMargin DESC;
+
+
+CREATE VIEW tsk3_qry_c AS
+SELECT Warranty_ID, Warranty_Term,
+TO_CHAR (Warranty_Price, '$999,999,999.99') "Warranty_Price"
+FROM Warranty
+ORDER BY Warranty_ID ASC;
+
+
+-- TASK4
+
+
+-- Table Creation: Artwork Item Sales Table
+
+CREATE TABLE Artwork_Item_Sale(
+    Item_ID NUMBER(6,0),
+    Item_ArtCategory VARCHAR2(10) NOT NULL,
+    Item_Title VARCHAR2(40) NOT NULL,
+    Item_Status VARCHAR2(40) NOT NULL,
+    Item_ShortDescription VARCHAR2(300) NOT NULL,
+    Item_Date VARCHAR2(20),
+    Item_Height VARCHAR2(60) NOT NULL,
+    Item_Width VARCHAR2(60) NOT NULL,
+    Item_Length VARCHAR2(60) NOT NULL,
+    Item_Material VARCHAR2(60) NOT NULL,
+    Item_OriginCity VARCHAR2(30),
+    Item_OriginRegion VARCHAR(30),
+    Item_OriginCountry VARCHAR2(30),
+    Item_Suggested_List_Price NUMBER(9,2),
+    Item_Minimum_Selling_Price NUMBER(9,2),
+    Item_How_Acquired VARCHAR2(30) NOT NULL,
+    CONSTRAINT sa_itmID_pk PRIMARY KEY (Item_ID),
+    CONSTRAINT sa_itstat_ck CHECK (Item_Status IN ('FORSALE', 'SOLD')),
+    CONSTRAINT sa_howacq_ck CHECK (Item_How_Acquired IN ('CONSIGNMENT', 'PURCHASE')) 
+);
+
+
+CREATE TABLE Artwork_Item_Service(
+    Item_ID NUMBER(6),
+    Item_Title VARCHAR(40) NOT NULL,
+    Item_Category VARCHAR(8) NOT NULL,
+    Item_Description VARCHAR2(300) NOT NULL,
+    CONSTRAINT itmsrvc_itmID_pk PRIMARY KEY (Item_ID)
+);
+
+
+CREATE TABLE Artist (
+    Artist_ID NUMBER(6),
+    Artist_FirstName VARCHAR2(20) NOT NULL,
+    Artist_LastName VARCHAR2(20) NOT NULL,
+    Artist_Category VARCHAR2(40) NOT NULL,
+    Artist_PhoneNumber VARCHAR2(10),
+    Artist_Email VARCHAR2(30),
+    Artist_City VARCHAR2(40),
+    Artist_State VARCHAR2(40),
+    Artist_Country VARCHAR2(40),
+    Artist_StartYear NUMBER(4,0) NOT NULL,
+    Artist_EndYear NUMBER(4,0),
+    Art_Description VARCHAR2(300) NOT NULL,
+    Artist_YearsExperience AS (Artist_StartYear || ' to ' || Artist_EndYear),
+    CONSTRAINT artist_artistID_pk PRIMARY KEY (Artist_ID),
+    CONSTRAINT artist_cat_chk CHECK (Artist_Category IN ('Painter', 'Photographer', 'Ceramicist', 'Printer', 'Other'))
+);
+
+
+CREATE TABLE Vendor (
+    Vendor_ID NUMBER(6,0),
+    Vendor_Org VARCHAR2(25),
+    Vendor_FirstName VARCHAR2(25) NOT NULL,
+    Vendor_LastName VARCHAR2(25) NOT NULL,
+    Vendor_StreetAddress VARCHAR2(50) NOT NULL,
+    Vendor_City VARCHAR2(20) NOT NULL,
+    Vendor_State VARCHAR2(2) NOT NULL,
+    Vendor_Zipcode NUMBER(5,0) NOT NULL,
+    Vendor_PhoneNumber NUMBER(10,0) NOT NULL UNIQUE,
+    Vendor_Email VARCHAR2(40) NOT NULL UNIQUE,
+    CONSTRAINT vd_vdID_pk PRIMARY KEY (Vendor_ID)
+);
+
+
+CREATE TABLE Purchase_Agreement (
+    Purchase_Agreement_ID VARCHAR2(5),
+    Purchase_Agreement_Date DATE NOT NULL,
+    Purchase_Terms VARCHAR2(10) NOT NULL,
+    Purchaser_ID NUMBER(6,0),
+    Vendor_ID NUMBER(6,0),
+    Purchased_ItemID NUMBER(6,0), 
+    Purchase_Price NUMBER(9,2) NOT NULL,
+    Purchase_Discount NUMBER(9,2),
+    Purchase_Shipping_Charge NUMBER(9,2),
+    Purchase_Misc_Charge NUMBER(9,2),
+    CONSTRAINT prchs_prchsID_pk PRIMARY KEY(Purchase_Agreement_ID),
+    CONSTRAINT prchs_prchserID_fk FOREIGN KEY(Purchaser_ID) REFERENCES EMPLOYEE(Employee_ID),
+    CONSTRAINT purchs_premp_chk CHECK (Purchaser_ID IN (1000,1002,1003)),
+    CONSTRAINT prchs_itemID_fk FOREIGN KEY(Purchased_ItemID) REFERENCES Artwork_Item_Sale(Item_ID),
+    CONSTRAINT prchs_sellerID_fk FOREIGN KEY(Vendor_ID) REFERENCES VENDOR(Vendor_ID),
+    CONSTRAINT prchs_prchsprice_chk CHECK (Purchase_Price >= 0)
+);
+
+
+CREATE TABLE Consignment_Agreement (
+    Consignment_Agreement_ID NUMBER(5),
+    Consignment_Agreement_Date DATE NOT NULL,
+    Consignment_Terms VARCHAR2(10) NOT NULL,
+    Consigner_ID NUMBER(6,0),
+    Owner_ID NUMBER(6,0),
+    Consigned_ItemID NUMBER(6),
+    Consignment_StartDate DATE NOT NULL,
+    Consignment_EndDate DATE,
+    Consignment_Suggested_SellPrice NUMBER(9,0) NOT NULL,
+    Consignment_MinimumSellPrice NUMBER(9,0) NOT NULL,
+    Consignment_Commission NUMBER(2,0) NOT NULL,
+    CONSTRAINT cons_consID_pk PRIMARY KEY (Consignment_Agreement_ID),
+    CONSTRAINT cons_conserID_fk FOREIGN KEY (Consigner_ID) REFERENCES Employee (Employee_ID),
+    CONSTRAINT cons_empid_chk CHECK (Consigner_ID IN (1000,1002,1003)),
+    CONSTRAINT cons_itemID_fk FOREIGN KEY (Consigned_ItemID) REFERENCES Artwork_Item_Sale (Item_ID),
+    CONSTRAINT cons_ownerID_fk FOREIGN KEY (Owner_ID) REFERENCES Vendor (Vendor_ID),
+    CONSTRAINT cons_enddt_chk CHECK (Consignment_EndDate > Consignment_StartDate),
+    CONSTRAINT cons_conscom_chk CHECK (Consignment_Commission>=0 AND Consignment_Commission<100),
+    CONSTRAINT cons_propprice_chk CHECK (Consignment_Suggested_SellPrice >= 0),
+    CONSTRAINT cons_minprice_chk CHECK (Consignment_MinimumSellPrice >= 0)
+);
+
+
+CREATE TABLE Sales_Invoice (
+    SalesInvoice_ID NUMBER(5,0),
+    SalesInvoice_Date DATE NOT NULL,
+    SalesInvoice_Terms VARCHAR2(10) NOT NULL,
+    Salesperson_ID NUMBER(6,0) NOT NULL,
+    Item_Sold_ID NUMBER(6,0) NOT NULL,
+    Warranty_ID NUMBER(4,0),
+    Approver_ID NUMBER(6,0),
+    Approval_Date DATE,
+    Customer_ID NUMBER(6,0) NOT NULL,
+    Sales_Price NUMBER(9,2) NOT NULL,
+    Sales_Discount NUMBER(6,2),
+    Sales_Shipping_Charge NUMBER(9,2),
+    Sales_Misc_Charge NUMBER(9,2),
+    CONSTRAINT salesin_salesinID_pk PRIMARY KEY (SalesInvoice_ID),
+    CONSTRAINT salesin_sellerID_fk FOREIGN KEY (Salesperson_ID) REFERENCES Employee (Employee_ID),
+    CONSTRAINT salesin_custID_fk FOREIGN KEY (Customer_ID) REFERENCES Customer (Customer_ID),
+    CONSTRAINT salesin_itemID_fk FOREIGN KEY (Item_Sold_ID) REFERENCES Artwork_Item_Sale (Item_ID),
+    CONSTRAINT salesin_wrntyID_fk FOREIGN KEY (Warranty_ID) REFERENCES Warranty (Warranty_ID),
+    CONSTRAINT salesin_saleprice_chk CHECK (Sales_Price >= 0)
+);
+
+
+CREATE TABLE Service_Invoice (
+    Service_Invoice_ID NUMBER(4),
+    Service_Invoice_Date DATE NOT NULL,
+    Service_Invoice_Terms VARCHAR2(10) NOT NULL,
+    Serviceperson_ID NUMBER(6,0),
+    Service_ID NUMBER(4,0),
+    Item_Serviced_ID NUMBER(4,0),
+    Customer_ID NUMBER(6,0),
+    Service_Discount NUMBER(9,2),
+    Service_Shipping_Charge NUMBER(9,2),
+    Service_Misc_Charge NUMBER(9,2),
+    CONSTRAINT servein_serveID_pk PRIMARY KEY(Service_Invoice_ID),
+    CONSTRAINT servein_serverID_fk FOREIGN KEY(Serviceperson_ID) REFERENCES EMPLOYEE(Employee_ID),
+    CONSTRAINT servein_apprID_fk FOREIGN KEY(Customer_ID) REFERENCES Customer(Customer_ID),
+    CONSTRAINT servein_itemID_fk FOREIGN KEY(Item_Serviced_ID) REFERENCES Artwork_Item_Service(Item_ID),
+    CONSTRAINT servein_sellerID_fk FOREIGN KEY(Service_ID) REFERENCES Service(Service_ID)
+);
+
+
+-- TRANSACTION ARTWORK PURCHASE 1
+
+
+INSERT INTO Artwork_Item_Sale (Item_ID, Item_ArtCategory, Item_Title, Item_Status, Item_ShortDescription, Item_Date, Item_Height, Item_Width, Item_Length, Item_Material, Item_OriginCity, Item_OriginRegion, Item_OriginCountry, Item_How_Acquired)
+VALUES(1000, 'Painting', 'Boat on Lake', 'FORSALE', 'This a boat painting', '1995', '11 inch', '15 inch', '0.5 inch', 'Canvas and watercolor', 'Lafayette', 'California', 'United States of America', 'PURCHASE');
+
+
+-- TRANSACTION ARTWORK PURCHASE 2
+
+INSERT INTO Artwork_Item_Sale (Item_ID, Item_ArtCategory, Item_Title, Item_Status, Item_ShortDescription, Item_Date, Item_Height, Item_Width, Item_Length, Item_Material, Item_OriginCity, Item_OriginRegion, Item_OriginCountry, Item_How_Acquired)
+VALUES(1001, 'Ceramic', 'Greek Bowl', 'FORSALE', 'This a greek bowl made of clay', '1990', '12 inch', '24 inch', '10 inch', 'Ceramic clay and paint', 'Walnut', 'California', 'United States of America', 'PURCHASE');
+
+
+-- TRANSACTION ARTWORK PURCHASE 3
+
+INSERT INTO Artwork_Item_Sale (Item_ID, Item_ArtCategory, Item_Title, Item_Status, Item_ShortDescription, Item_Date, Item_Height, Item_Width, Item_Length, Item_Material, Item_OriginCity, Item_OriginRegion, Item_OriginCountry, Item_How_Acquired)
+VALUES(1002, 'Photo', 'Mole in a Hole', 'FORSALE', 'This picture of a Mole', '1895', '20 inch', '20 inch', '0.5 inch', 'photographic film', 'Baltimore', 'Maryland', 'United States of America', 'PURCHASE');
+
+
+-- TRANSACTION ARTWORK PURCHASE 4
+
+INSERT INTO Artwork_Item_Sale (Item_ID, Item_ArtCategory, Item_Title, Item_Status, Item_ShortDescription, Item_Date, Item_Height, Item_Width, Item_Length, Item_Material, Item_OriginCity, Item_OriginRegion, Item_OriginCountry, Item_How_Acquired)
+VALUES(1003, 'Print', 'Sinkhole', 'FORSALE', 'This print of a sinkhole', '1965', '10 inch', '10 inch', '0.5 inch', 'Wood', 'Paris', 'California', 'United States of America', 'PURCHASE');
+
+
+-- TRANSACTION ARTWORK PURCHASE 5
+
+INSERT INTO Artwork_Item_Sale (Item_ID, Item_ArtCategory, Item_Title, Item_Status, Item_ShortDescription, Item_Date, Item_Height, Item_Width, Item_Length, Item_Material, Item_OriginCity, Item_OriginRegion, Item_OriginCountry, Item_How_Acquired)
+VALUES(1004, 'Other', 'Sculpture of Man', 'FORSALE', 'This a sculpture of a man', '1955', '12 ft', '2 ft', '30 inch', 'Canvas and oil', 'London', 'England', 'United Kingdom', 'PURCHASE');
+
+
+-- TRANSACTION ARTWORK PURCHASE 6
+
+INSERT INTO Artwork_Item_Sale (Item_ID, Item_ArtCategory, Item_Title, Item_Status, Item_ShortDescription, Item_Date, Item_Height, Item_Width, Item_Length, Item_Material, Item_OriginCity, Item_OriginRegion, Item_OriginCountry, Item_How_Acquired)
+VALUES(1005, 'Print', 'Elvis as John Wayne', 'FORSALE', 'This a print of cowboy elvis', '1992', '24 inch', '12 inch', '0.5 inch', 'Paper and ink', 'New York', 'New York', 'United States of America', 'PURCHASE');
+
+
+-- TRANSACTION ARTWORK PURCHASE 7
+
+INSERT INTO Artwork_Item_Sale (Item_ID, Item_ArtCategory, Item_Title, Item_Status, Item_ShortDescription, Item_Date, Item_Height, Item_Width, Item_Length, Item_Material, Item_OriginCity, Item_OriginRegion, Item_OriginCountry, Item_How_Acquired)
+VALUES(1006, 'Photo', 'London on Fire', 'FORSALE', 'This a photo of London on fire', '1990', '18 inch', '12 inch', '0.5 inch', 'photographic film', 'Chicago', 'Illinois', 'United States of America', 'PURCHASE');
+
+
+-- TRANSACTION ARTWORK PURCHASE 8
+
+INSERT INTO Artwork_Item_Sale (Item_ID, Item_ArtCategory, Item_Title, Item_Status, Item_ShortDescription, Item_Date, Item_Height, Item_Width, Item_Length, Item_Material, Item_OriginCity, Item_OriginRegion, Item_OriginCountry, Item_How_Acquired)
+VALUES(1007, 'Ceramic', 'Banana', 'FORSALE', 'This a ceramic banana', '2000', '12 inch', '16 inch', '25 inch', 'Ceramic clay and paint', 'San Francisco', 'California', 'United States of America', 'PURCHASE');
+
+
+-- Inserts to Vendor Table
+
+
+-- VENDOR 1: sellers, not consigners
+
+INSERT INTO VENDOR(Vendor_ID, Vendor_Org, Vendor_FirstName, Vendor_LastName, Vendor_StreetAddress, Vendor_City, Vendor_State, Vendor_Zipcode, Vendor_PhoneNumber, Vendor_Email)
+VALUES(1000, 'Acme Art Auctions', 'Bill', 'Smith', '1500 Lizzie St.', 'Los Angeles', 'CA', 93111, 8003333333, 'bsmith@acmeart.com');
+
+
+-- VENDOR 2: sellers, not consigners
+
+INSERT INTO VENDOR(Vendor_ID, Vendor_Org, Vendor_FirstName, Vendor_LastName, Vendor_StreetAddress, Vendor_City, Vendor_State, Vendor_Zipcode, Vendor_PhoneNumber, Vendor_Email)
+VALUES(1001, 'Jimmy Dean Auctions', 'Jill', 'Bif', '500 Jind Rd.', 'San Francisco', 'CA', 93938, 3827584829, 'jbif@jdauctions.com');
+
+
+-- VENDOR 3: sellers, not consigners
+
+INSERT INTO VENDOR(Vendor_ID, Vendor_Org, Vendor_FirstName, Vendor_LastName, Vendor_StreetAddress, Vendor_City, Vendor_State, Vendor_Zipcode, Vendor_PhoneNumber, Vendor_Email)
+VALUES(1002, 'Lean Mean Art Auctions', 'Will', 'Ritz', '100 Seas Dr.', 'Chicago', 'IL', 12351, 8932484837, 'bsmith@leanmeanmachine.com');
+
+
+-- VENDOR 4: sellers, not consigners
+
+INSERT INTO VENDOR(Vendor_ID, Vendor_Org, Vendor_FirstName, Vendor_LastName, Vendor_StreetAddress, Vendor_City, Vendor_State, Vendor_Zipcode, Vendor_PhoneNumber, Vendor_Email)
+VALUES(1003, 'Gerp Auctions', 'John', 'Gerp', '9800 Bully Rd.', 'San Luis Obispo', 'CA', 98375, 9128273122, 'bsmith@gerpco.com');
+
+
+
+-- Inserts for the Purchase Agreement Table
+
+
+-- Purchase Agreement 1
+
+INSERT INTO Purchase_Agreement(Purchase_Agreement_ID, Purchase_Agreement_Date, Purchase_Terms, Purchaser_ID, Vendor_ID, Purchased_ItemID, Purchase_Price, Purchase_Discount, Purchase_Shipping_Charge, Purchase_Misc_Charge)
+VALUES(10000, '02-10-2021', 'Net 30', 1000, 1000, 1000, 5000, 100, 200, 300);
+
+
+-- Purchase Agreement 2
+
+INSERT INTO Purchase_Agreement(Purchase_Agreement_ID, Purchase_Agreement_Date, Purchase_Terms, Purchaser_ID, Vendor_ID, Purchased_ItemID, Purchase_Price, Purchase_Discount, Purchase_Shipping_Charge, Purchase_Misc_Charge)
+VALUES(10001, '03-15-2020', 'Cash', 1002, 1001, 1001, 6000, 50, 100, 20);
+
+
+-- Purchase Agreement 3
+
+INSERT INTO Purchase_Agreement(Purchase_Agreement_ID, Purchase_Agreement_Date, Purchase_Terms, Purchaser_ID, Vendor_ID, Purchased_ItemID, Purchase_Price, Purchase_Discount, Purchase_Shipping_Charge, Purchase_Misc_Charge)
+VALUES(10002, '04-05-2019', 'Net 30', 1003, 1002, 1002, 2500, 0, 0, 0);
+
+
+-- Purchase Agreement 4
+
+INSERT INTO Purchase_Agreement(Purchase_Agreement_ID, Purchase_Agreement_Date, Purchase_Terms, Purchaser_ID, Vendor_ID, Purchased_ItemID, Purchase_Price, Purchase_Discount, Purchase_Shipping_Charge, Purchase_Misc_Charge)
+VALUES(10003, '12-09-2021', 'Cash', 1000, 1003, 1003, 3000, 150, 250, 350);
+
+
+-- Purchase Agreement 5
+
+INSERT INTO Purchase_Agreement(Purchase_Agreement_ID, Purchase_Agreement_Date, Purchase_Terms, Purchaser_ID, Vendor_ID, Purchased_ItemID, Purchase_Price, Purchase_Discount, Purchase_Shipping_Charge, Purchase_Misc_Charge)
+VALUES(10004, '09-20-2020', 'Net 30', 1002, 1000, 1004, 5500, 75, 25, 35);
+
+
+-- Purchase Agreement 6
+
+INSERT INTO Purchase_Agreement(Purchase_Agreement_ID, Purchase_Agreement_Date, Purchase_Terms, Purchaser_ID, Vendor_ID, Purchased_ItemID, Purchase_Price, Purchase_Discount, Purchase_Shipping_Charge, Purchase_Misc_Charge)
+VALUES(10005, '05-19-2021', 'Cash', 1003, 1001, 1005, 1500, 10, 30, 20);
+
+
+-- Purchase Agreement 7
+
+INSERT INTO Purchase_Agreement(Purchase_Agreement_ID, Purchase_Agreement_Date, Purchase_Terms, Purchaser_ID, Vendor_ID, Purchased_ItemID, Purchase_Price, Purchase_Discount, Purchase_Shipping_Charge, Purchase_Misc_Charge)
+VALUES(10006, '06-02-2021', 'Net 30', 1000, 1002, 1006, 2000, 0, 199, 29);
+
+
+-- Purchase Agreement 8
+
+INSERT INTO Purchase_Agreement(Purchase_Agreement_ID, Purchase_Agreement_Date, Purchase_Terms, Purchaser_ID, Vendor_ID, Purchased_ItemID, Purchase_Price, Purchase_Discount, Purchase_Shipping_Charge, Purchase_Misc_Charge)
+VALUES(10007, '07-11-2021', 'Cash', 1002, 1003, 1007, 600, 100, 0, 20);
+
+-- Consignment Inserts for the Artwork Item Sales Table
+
+
+-- TRANSACTION ARTWORK CONSIGNMENT 1
+
+INSERT INTO Artwork_Item_Sale (Item_ID, Item_ArtCategory, Item_Title, Item_Status, Item_ShortDescription, Item_Date, Item_Height, Item_Width, Item_Length, Item_Material, Item_OriginCity, Item_OriginRegion, Item_OriginCountry, Item_How_Acquired)
+VALUES(1008, 'Ceramic', 'Bird', 'FORSALE', 'This a ceramic bird', '1996', '5 inch', '4 inch', '6 inch', 'Ceramic clay', 'Boston', 'Massachusetts', 'United States of America', 'CONSIGNMENT');
+
+
+-- TRANSACTION ARTWORK CONSIGNMENT 2
+
+INSERT INTO Artwork_Item_Sale (Item_ID, Item_ArtCategory, Item_Title, Item_Status, Item_ShortDescription, Item_Date, Item_Height, Item_Width, Item_Length, Item_Material, Item_OriginCity, Item_OriginRegion, Item_OriginCountry, Item_How_Acquired)
+VALUES(1009, 'Painting', 'Clay and Fruit', 'FORSALE', 'This a painting of a bowl of bread', '1890s', '10 inch', '16 inch', '0.5 inch', 'Canvas and oil paints', 'Horton', 'Alabama', 'United States of America', 'CONSIGNMENT');
+
+
+-- TRANSACTION ARTWORK CONSIGNMENT 3
+
+INSERT INTO Artwork_Item_Sale (Item_ID, Item_ArtCategory, Item_Title, Item_Status, Item_ShortDescription, Item_Date, Item_Height, Item_Width, Item_Length, Item_Material, Item_OriginCity, Item_OriginRegion, Item_OriginCountry, Item_How_Acquired)
+VALUES(1010, 'Other', 'Elegant Weasel', 'FORSALE', 'This is a carving of a weasel', '1895', '12 inch', '15 inch', '4 inch', 'Wood and wire', 'Blues', 'Alaska', 'United States of America', 'CONSIGNMENT');
+
+
+-- TRANSACTION ARTWORK CONSIGNMENT 4
+
+INSERT INTO Artwork_Item_Sale (Item_ID, Item_ArtCategory, Item_Title, Item_Status, Item_ShortDescription, Item_Date, Item_Height, Item_Width, Item_Length, Item_Material, Item_OriginCity, Item_OriginRegion, Item_OriginCountry, Item_How_Acquired)
+VALUES(1011, 'Other', 'Christmas Tree', 'FORSALE', 'This a model of a Christmas tree', '1962', '30 inch', '4 ft', '5 ft', 'Wood and paper', 'Paris', 'Ile-de-France', 'France', 'CONSIGNMENT');
+
+
+-- TRANSACTION ARTWORK CONSIGNMENT 5
+
+INSERT INTO Artwork_Item_Sale (Item_ID, Item_ArtCategory, Item_Title, Item_Status, Item_ShortDescription, Item_Date, Item_Height, Item_Width, Item_Length, Item_Material, Item_OriginCity, Item_OriginRegion, Item_OriginCountry, Item_How_Acquired)
+VALUES(1012, 'Picture', 'Picture of Bread', 'FORSALE', 'This a picture of a bread loaf', '1935', '10 inch', '2 ft', '0.5 inch', 'Canvas and acrylic paint', 'Sussex', 'England', 'United Kingdom', 'CONSIGNMENT');
+
+
+-- Updates Related to Purchase Agreement
+
+UPDATE Artwork_Item_Sale itmsale
+SET itmsale.Item_Suggested_List_Price = 
+(SELECT purch.Purchase_Price FROM Purchase_Agreement purch WHERE purch.Purchased_ItemID = itmsale.Item_ID) * 1.25
+WHERE itmsale.Item_How_Acquired IN ('PURCHASE');
+
+UPDATE Artwork_Item_Sale itmsale
+SET itmsale.Item_Minimum_Selling_Price = 
+(SELECT purch.Purchase_Price FROM Purchase_Agreement purch WHERE purch.Purchased_ItemID = itmsale.Item_ID) * 1.1
+WHERE itmsale.Item_How_Acquired IN ('PURCHASE');
+
+
+
+-- Consignment Inserts for Vendor Table
+
+
+-- VENDOR 5: consigners
+
+INSERT INTO VENDOR(Vendor_ID, Vendor_FirstName, Vendor_LastName, Vendor_StreetAddress, Vendor_City, Vendor_State, Vendor_Zipcode, Vendor_PhoneNumber, Vendor_Email)
+VALUES(1004, 'Horus', 'Samuelson', '99 Main Dr.', 'Concord', 'CA', 92149, 8007584829, 'horussam22@gmail.com');
+
+
+-- VENDOR 6: consigners
+
+INSERT INTO VENDOR(Vendor_ID, Vendor_FirstName, Vendor_LastName, Vendor_StreetAddress, Vendor_City, Vendor_State, Vendor_Zipcode, Vendor_PhoneNumber, Vendor_Email)
+VALUES(1005, 'Bimbo', 'Bentner', '111 Element Rd.', 'Santa Barbara', 'CA', 34748, 8293827584, 'bimbent@hotmail.com');
+
+
+-- VENDOR 7: consigners
+
+INSERT INTO VENDOR(Vendor_ID, Vendor_FirstName, Vendor_LastName, Vendor_StreetAddress, Vendor_City, Vendor_State, Vendor_Zipcode, Vendor_PhoneNumber, Vendor_Email)
+VALUES(1006, 'Hilson', 'Arters', '945 Horse Wy.', 'Las Vegas', 'NV', 13412, 8993333837, 'hart2234@yahoo.com');
+
+
+
+-- Consignment Agreement Table Inserts
+
+
+-- Consignment Agreement 1
+
+INSERT INTO Consignment_Agreement(Consignment_Agreement_ID, Consignment_Agreement_Date, Consignment_Terms, Consigner_ID, Owner_ID, Consigned_ItemID, Consignment_StartDate, Consignment_EndDate, Consignment_Suggested_SellPrice, Consignment_MinimumSellPrice, Consignment_Commission)
+VALUES(10000, '10-11-2021', 'Net 30', 1000, 1004, 1008, '10-20-2005', '10-20-2018', 2000, 1500, 10);
+
+
+-- Consignment Agreement 2
+
+INSERT INTO Consignment_Agreement(Consignment_Agreement_ID, Consignment_Agreement_Date, Consignment_Terms, Consigner_ID, Owner_ID, Consigned_ItemID, Consignment_StartDate, Consignment_EndDate, Consignment_Suggested_SellPrice, Consignment_MinimumSellPrice, Consignment_Commission)
+VALUES(10001, '05-23-2018', 'Cash', 1002, 1005, 1009, '10-22-2005', '10-22-2015', 3000, 2500, 20);
+
+
+-- Consignment Agreement 3
+
+INSERT INTO Consignment_Agreement(Consignment_Agreement_ID, Consignment_Agreement_Date, Consignment_Terms, Consigner_ID, Owner_ID, Consigned_ItemID, Consignment_StartDate, Consignment_EndDate, Consignment_Suggested_SellPrice, Consignment_MinimumSellPrice, Consignment_Commission)
+VALUES(10002, '06-25-2018', 'Net 30', 1003, 1006, 1010, '09-21-2005', NULL, 2500, 2000, 15);
+
+
+-- Consignment Agreement 4
+
+INSERT INTO Consignment_Agreement(Consignment_Agreement_ID, Consignment_Agreement_Date, Consignment_Terms, Consigner_ID, Owner_ID, Consigned_ItemID, Consignment_StartDate, Consignment_EndDate, Consignment_Suggested_SellPrice, Consignment_MinimumSellPrice, Consignment_Commission)
+VALUES(10003, '12-27-2020', 'Cash', 1000, 1004, 1011, '05-13-2007', NULL, 3500, 2500, 9);
+
+
+-- Consignment Agreement 5
+
+INSERT INTO Consignment_Agreement(Consignment_Agreement_ID, Consignment_Agreement_Date, Consignment_Terms, Consigner_ID, Owner_ID, Consigned_ItemID, Consignment_StartDate, Consignment_EndDate, Consignment_Suggested_SellPrice, Consignment_MinimumSellPrice, Consignment_Commission)
+VALUES(10004, '11-23-2020', 'Net 30', 1002, 1005, 1012, '10-20-2010', NULL, 5750, 4750, 5);
+
+
+
+-- Consignment Updates
+
+UPDATE Artwork_Item_Sale itmsale
+SET itmsale.Item_Suggested_List_Price = 
+(SELECT cons.Consignment_Suggested_SellPrice FROM Consignment_Agreement cons WHERE cons.Consigned_ItemID = itmsale.Item_ID)
+WHERE itmsale.Item_How_Acquired IN ('CONSIGNMENT');
+
+UPDATE Artwork_Item_Sale itmsale
+SET itmsale.Item_Minimum_Selling_Price = 
+(SELECT cons.Consignment_MinimumSellPrice FROM Consignment_Agreement cons WHERE cons.Consigned_ItemID = itmsale.Item_ID)
+WHERE itmsale.Item_How_Acquired IN ('CONSIGNMENT');
+
+
+
+-- Inserts for the Sales Invoices
+
+
+-- TRANSACTION ARTWORK SALE 1
+
+INSERT INTO Sales_Invoice(SalesInvoice_ID, SalesInvoice_Date, SalesInvoice_Terms, Salesperson_ID, Item_Sold_ID, Warranty_ID, Customer_ID, Sales_Price, Sales_Discount, Sales_Shipping_Charge, Sales_Misc_Charge)
+VALUES(1000, '01-23-21', 'Net 30', 1003, 1000, 1001, 429844, 6000, 50, 25, 35);
+
+
+-- TRANSACTION ARTWORK SALE 2
+
+INSERT INTO Sales_Invoice(SalesInvoice_ID, SalesInvoice_Date, SalesInvoice_Terms, Salesperson_ID, Item_Sold_ID, Warranty_ID, Customer_ID, Sales_Price, Sales_Discount, Sales_Shipping_Charge, Sales_Misc_Charge)
+VALUES(1001, '01-27-21', 'Cash', 1006, 1001, 1000, 429844, 7500, 650, 60, 25);
+
+
+-- TRANSACTION ARTWORK SALE 3
+
+INSERT INTO Sales_Invoice(SalesInvoice_ID, SalesInvoice_Date, SalesInvoice_Terms, Salesperson_ID, Item_Sold_ID, Warranty_ID, Customer_ID, Sales_Price, Sales_Discount, Sales_Shipping_Charge, Sales_Misc_Charge)
+VALUES(1002, '01-25-21', 'Net 30', 1009, 1002, 1002, 429844, 3000, 250, 50, 50);
+
+
+-- TRANSACTION ARTWORK SALE 4
+
+INSERT INTO Sales_Invoice(SalesInvoice_ID, SalesInvoice_Date, SalesInvoice_Terms, Salesperson_ID, Item_Sold_ID, Customer_ID, Sales_Price, Sales_Discount, Sales_Shipping_Charge, Sales_Misc_Charge)
+VALUES(1003, '01-21-21', 'Cash', 1003, 1003, 234985, 3500, 500, 35, 15);
+
+
+-- TRANSACTION ARTWORK SALE 5
+
+INSERT INTO Sales_Invoice(SalesInvoice_ID, SalesInvoice_Date, SalesInvoice_Terms, Salesperson_ID, Item_Sold_ID, Customer_ID, Sales_Price, Sales_Discount, Sales_Shipping_Charge, Sales_Misc_Charge)
+VALUES(1004, '02-26-21', 'Net 30', 1006, 1004, 234985, 6500, 750, 0, 0);
+
+
+-- TRANSACTION ARTWORK SALE 6
+
+INSERT INTO Sales_Invoice(SalesInvoice_ID, SalesInvoice_Date, SalesInvoice_Terms, Salesperson_ID, Item_Sold_ID, Customer_ID, Sales_Price, Sales_Discount, Sales_Shipping_Charge, Sales_Misc_Charge)
+VALUES(1005, '02-23-21', 'Cash', 1009, 1005, 229304, 1000, 200, 45, 10);
+
+
+-- TRANSACTION ARTWORK SALE 7
+
+INSERT INTO Sales_Invoice(SalesInvoice_ID, SalesInvoice_Date, SalesInvoice_Terms, Salesperson_ID, Item_Sold_ID, Customer_ID, Sales_Price, Sales_Discount, Sales_Shipping_Charge, Sales_Misc_Charge)
+VALUES(1006, '03-05-21', 'Net 30', 1003, 1008, 969212, 2000, 645, 90, 45);
+
+
+
+-- Sales Invoice Updates
+
+
+-- Update Sales Invoice Customer 1
+
+UPDATE Sales_Invoice
+SET Approver_ID = 1000
+WHERE Customer_ID = 429844; 
+
+UPDATE Sales_Invoice
+SET Approval_Date = '03-01-2021'
+WHERE Customer_ID = 429844; 
+
+
+-- Update Sales Invoice Customer 2
+
+UPDATE Sales_Invoice
+SET Approver_ID = 1003
+WHERE Customer_ID = 229304; 
+
+UPDATE Sales_Invoice
+SET Approval_Date = '03-02-2021'
+WHERE Customer_ID = 229304; 
+
+
+-- Update Sales Invoice 3 Customer 3
+
+UPDATE Sales_Invoice
+SET Approver_ID = 1000
+WHERE Customer_ID = 234985; 
+
+UPDATE Sales_Invoice
+SET Approval_Date = '03-03-2021'
+WHERE Customer_ID = 234985; 
+
+
+-- Update Sales Invoice 4 Customer 4
+
+UPDATE Sales_Invoice
+SET Approver_ID = 1003
+WHERE Customer_ID = 969212; 
+
+UPDATE Sales_Invoice
+SET Approval_Date = '03-01-2021'
+WHERE Customer_ID = 969212; 
+
+
+-- Update Sales Invoice Customer 1
+
+UPDATE Artwork_Item_Sale
+SET Item_Status = 'SOLD'
+WHERE Item_ID IN (SELECT Item_Sold_ID FROM Sales_Invoice);
+
+-- (65)
+
+-- Inserts for the Service Invoices
+
+
+-- Inserts to Customer Table
+
+INSERT INTO Customer
+VALUES (029403, 'Hull', 'Henry', '633 South Rockcrest St.', 'Royal Oak', 'MI', 48067, 2319177463, 'huhenry10@gmail.com');
+
+INSERT INTO Customer
+VALUES (843983, 'Hayden', 'Noah', '32 Creek Ave.', 'Norwalk', 'CT', 06851, 4759288362, 'haydennoah12@gmail.com');
+
+INSERT INTO Customer
+VALUES (192384, 'Conner', 'Miles', '902 Briarwood St.', 'Campbell', 'CA', 95008, 8050483729, 'mconner84@gmail.com');
+
+INSERT INTO Customer
+VALUES (921983, 'Henderson', 'Julie', '79 Cypress St.', 'San Jose', 'CA', 95127, 8050194747, 'julieson2139@gmail.com');
+
+INSERT INTO Customer
+VALUES (128423, 'Delgado', 'Emilio', '109 N. Big Rock Cove Rd.', 'Commack', 'NY', 11725, 9291293274, 'emdelgado1@gmail.com');
+
+
+
+-- Inserts for art purchased from the gallery
+
+INSERT INTO Artwork_Item_Service (Item_ID, Item_Title, Item_Category, Item_Description)
+VALUES (2000, 'Shiny Guitar', 'Print', 'A metallic guitar picture');
+
+INSERT INTO Artwork_Item_Service (Item_ID, Item_Title, Item_Category, Item_Description)
+VALUES (2001, 'Ancient Mollusk', 'Photo', 'Photograph of an ancient mollusk');
+
+INSERT INTO Artwork_Item_Service (Item_ID, Item_Title, Item_Category, Item_Description)
+VALUES (2002, 'Lukes Hut', 'Ceramic', 'Hut from Star Wars');
+
+INSERT INTO Artwork_Item_Service (Item_ID, Item_Title, Item_Category, Item_Description)
+VALUES (2003, 'First Tweet', 'Other', 'NFT of Jack Dorseys first Tweet');
+
+INSERT INTO Artwork_Item_Service (Item_ID, Item_Title, Item_Category, Item_Description)
+VALUES (2004, 'Dog Statue', 'Other', 'Statue of dog');
+
+
+-- Inserts for art not purchased from the gallery
+
+INSERT INTO Artwork_Item_Service (Item_ID, Item_Title, Item_Category, Item_Description)
+VALUES (1001, 'Greek Bowl', 'Ceramic', 'This a greek bowl made of clay');
+
+INSERT INTO Artwork_Item_Service (Item_ID, Item_Title, Item_Category, Item_Description)
+VALUES (1008, 'Bird', 'Ceramic', 'This a ceramic bird');
+
+INSERT INTO Artwork_Item_Service (Item_ID, Item_Title, Item_Category, Item_Description)
+VALUES (1003, 'Sinkhole', 'Print', 'This print of sinkhole');
+
+INSERT INTO Artwork_Item_Service (Item_ID, Item_Title, Item_Category, Item_Description)
+VALUES (1005, 'Elvis as John Wayne', 'Print', 'This a print of cowboy elvis');
+
+INSERT INTO Artwork_Item_Service (Item_ID, Item_Title, Item_Category, Item_Description)
+VALUES (1004, 'Sculpture of Man', 'Other', 'This a sculpture of a man');
+
+
+-- Inserts for new customers who did NOT purchase their art from the gallery
+
+
+-- TRANSACTION ARTWORK SERVICE NOT SOLD BY US 1
+
+INSERT INTO Service_Invoice
+VALUES (1005, '06-19-2020', 'Cash', 1002, 1009, 2000, 029403, 10, 0, 10);
+
+-- TRANSACTION ARTWORK SERVICE NOT SOLD BY US 2
+
+INSERT INTO Service_Invoice
+VALUES (1006, '07-13-2020', 'Credit', 1005, 1003, 2001, 843983, 7, 15, 20);
+
+-- TRANSACTION ARTWORK SERVICE NOT SOLD BY US 3
+
+INSERT INTO Service_Invoice
+VALUES (1007, '08-17-2020', 'Check', 1005, 1010, 2002, 192384, 12, 0, 10);
+
+-- TRANSACTION ARTWORK SERVICE NOT SOLD BY US 4
+
+INSERT INTO Service_Invoice
+VALUES (1008, '09-09-2020', 'Credit', 1008, 1001, 2003, 921983, 10, 0, 10);
+
+-- TRANSACTION ARTWORK SERVICE NOT SOLD BY US 5
+
+INSERT INTO Service_Invoice
+VALUES (1009, '10-21-2020', 'Cash', 1002, 1005, 2004, 128423, 15, 0, 10);
+
+
+
+-- Inserts for existing customers whose service is for art purchased from the gallery
+
+-- TRANSACTION ARTWORK SERVICE SOLD BY US 1
+
+INSERT INTO Service_Invoice
+VALUES (1000, '01-24-2021', 'Cash', 1008, 1003, 1008, 429844, 20, 42, 8);
+
+-- TRANSACTION ARTWORK SERVICE SOLD BY US 2
+
+INSERT INTO Service_Invoice
+VALUES (1001, '02-13-2021', 'Credit', 1008, 1002, 1008, 969212, 0, 0, 32);
+
+-- TRANSACTION ARTWORK SERVICE SOLD BY US 3
+
+INSERT INTO Service_Invoice
+VALUES (1002, '03-18-2020', 'Cash', 1002, 1008, 1003, 234985, 45, 75, 0);
+
+-- TRANSACTION ARTWORK SERVICE SOLD BY US 4
+
+INSERT INTO Service_Invoice
+VALUES (1003, '04-03-2020', 'Check', 1005, 1010, 1005, 229304, 0, 0, 20);
+
+-- TRANSACTION ARTWORK SERVICE SOLD BY US 5
+
+INSERT INTO Service_Invoice
+VALUES (1004, '05-26-2020', 'Check', 1002, 1006, 1004, 234985, 0, 0, 15);
+
+
+
+-- Query A 
+
+CREATE VIEW task5_query_A AS
+SELECT sal.SalesInvoice_ID "Sales Invoice Number", sal.SalesInvoice_Date "Sales Invoice Date",
+emp.Employee_FirstName || ' ' || emp.Employee_LastName "Salesperson Name",
+mgr.Employee_FirstName || ' ' || mgr.Employee_LastName "Manager Approved By", 
+cust.Customer_FirstName || ' ' || cust.Customer_LastName "Customer Name",
+itmsale.Item_ID "Artwork ID", itmsale.Item_ArtCategory "Artwork Category",
+itmsale.Item_Title "Artwork Title", sal.Sales_Price "Selling Price", sal.Sales_Discount "Discount",
+sal.Sales_Shipping_Charge "Shipping", sal.Sales_Misc_Charge "Misc. Charge",
+wrnty.Warranty_Price "Warranty Price",
+(sal.Sales_Price - sal.Sales_Discount + wrnty.Warranty_Price + sal.Sales_Shipping_Charge + sal.Sales_Misc_Charge) "Subtotal",
+((sal.Sales_Price - sal.Sales_Discount + wrnty.Warranty_Price + sal.Sales_Shipping_Charge + sal.Sales_Misc_Charge) * 0.0825) "Taxes",
+((sal.Sales_Price - sal.Sales_Discount + wrnty.Warranty_Price + sal.Sales_Shipping_Charge + sal.Sales_Misc_Charge) - 
+((sal.Sales_Price - sal.Sales_Discount + wrnty.Warranty_Price + sal.Sales_Shipping_Charge + sal.Sales_Misc_Charge) * 0.0825)) "Total Selling Price"
+FROM Sales_Invoice sal
+JOIN Employee emp ON sal.Salesperson_ID = emp.Employee_ID
+JOIN Employee mgr ON sal.Approver_ID = mgr.Managers_ID
+JOIN Customer cust ON sal.Customer_ID = cust.Customer_ID
+JOIN Artwork_Item_Sale itmsale ON sal.Item_Sold_ID = itmsale.Item_ID
+JOIN Warranty wrnty ON sal.Warranty_ID = wrnty.Warranty_ID;
+
+
+
+-- Query B
+
+CREATE VIEW task5_query_B AS
+SELECT purch.Purchase_Agreement_ID "Purchase Agreement Number",
+purch.Purchase_Agreement_Date "Purchase Date", vend.Vendor_Org "Company Name",
+vend.Vendor_FirstName || ' ' || vend.Vendor_LastName "Contact Name",
+emp.Employee_FirstName || ' ' || emp.Employee_LastName "Purchasing Manager",
+itmsale.Item_ID "Artwork ID", itmsale.Item_ArtCategory "Artwork Category", itmsale.Item_Title "Artwork Title",
+TO_CHAR (purch.Purchase_Price, '$999,999,999.99') "Purchase Amount", TO_CHAR (purch.Purchase_Shipping_Charge, '$999,999,999.99') "Shipping and Handling",
+TO_CHAR (purch.Purchase_Discount, '$999,999,999.99') "Discount",
+TO_CHAR (purch.Purchase_Misc_Charge, '$999,999,999.99') "Misc Charges",
+TO_CHAR ((purch.Purchase_Price + purch.Purchase_Shipping_Charge + purch.Purchase_Misc_Charge - purch.Purchase_Discount), '$999,999,999.99') "Subtotal",
+TO_CHAR ((purch.Purchase_Price + purch.Purchase_Shipping_Charge + purch.Purchase_Misc_Charge - purch.Purchase_Discount) * 0.0825, '$999,999,999.99') "Taxes",
+TO_CHAR ((purch.Purchase_Price + purch.Purchase_Shipping_Charge + purch.Purchase_Misc_Charge - purch.Purchase_Discount) - 
+((purch.Purchase_Price + purch.Purchase_Shipping_Charge + purch.Purchase_Misc_Charge - purch.Purchase_Discount) * 0.0825), '$999,999,999.99') "Total Purchase Cost"
+FROM Purchase_Agreement purch
+JOIN Vendor vend ON purch.Vendor_ID = vend.Vendor_ID
+JOIN Employee emp ON purch.Purchaser_ID = emp.Employee_ID
+JOIN Artwork_Item_Sale itmsale ON purch.Purchased_ItemID = itmsale.Item_ID
+ORDER BY purch.Purchase_Agreement_ID;
+
+
+
+-- Query C
+
+CREATE VIEW task5_query_C AS
+SELECT cons.Consignment_Agreement_ID "Consignment Agreement Number", cons.Consignment_Agreement_Date "Consignment Agreement Date", 
+vend.Vendor_Org "Company Name", vend.Vendor_FirstName || ' ' || vend.Vendor_LastName "Contact Name",
+emp.Employee_FirstName || ' ' || emp.Employee_LastName "Consigning Manager", itmsale.Item_ID "Artwork ID", 
+itmsale.Item_ArtCategory "Art Category", itmsale.Item_Title "Art Title", TO_CHAR (itmsale.Item_Suggested_List_Price, '$999,999,999.99') "Proposed Selling Price",
+TO_CHAR (itmsale.Item_Minimum_Selling_Price, '$999,999,999.99') "Minimum Selling Price", emp.Sales_Commission || '%' "Commission Percent",
+cons.Consignment_StartDate "Start Date", cons.Consignment_EndDate "End Date"
+FROM Consignment_Agreement cons
+JOIN Vendor vend ON cons.Owner_ID = vend.Vendor_ID
+JOIN Employee emp ON cons.Consigner_ID = emp.Employee_ID
+JOIN Artwork_Item_Sale itmsale ON cons.Consigned_ItemID = itmsale.Item_ID;
+
+
+
+
+-- Query D (Service Invoice)
+
+CREATE VIEW task5_query_D AS
+SELECT servin.Service_Invoice_ID "Service Invoice Number",
+servin.Service_Invoice_Date "Service Invoice Date",
+cust.Customer_FirstName || ' ' || cust.Customer_LastName "Customer Name",
+serv.Service_Description "Service Provided",
+itmserv.Item_Description "Item Description",
+TO_CHAR (serv.Service_Price, '$999,999,999.99') "Service Price",
+TO_CHAR (servin.Service_Discount, '$999,999,999.99') "Discount",
+TO_CHAR (servin.Service_Misc_Charge, '$999,999,999.99') "Misc. Charges",
+TO_CHAR ((serv.Service_Price - servin.Service_Discount + servin.Service_Misc_Charge), '$999,999,999.99') "Subtotal",
+TO_CHAR (((serv.Service_Price - servin.Service_Discount + servin.Service_Misc_Charge) * 0.0825), '$999,999,999.99') "Taxes",
+TO_CHAR (((serv.Service_Price - servin.Service_Discount + servin.Service_Misc_Charge) -
+(serv.Service_Price - servin.Service_Discount + servin.Service_Misc_Charge) * 0.0825), '$999,999,999.99') "Total Service Price"
+FROM Service_Invoice servin
+JOIN Customer cust ON servin.Customer_ID = cust.Customer_ID
+JOIN Artwork_Item_Service itmserv ON servin.Item_Serviced_ID = itmserv.Item_ID
+JOIN Service serv ON servin.Service_ID = serv.Service_ID;
+
+
+
+-- CUSTOMER ANALYSIS QUERY #1
+
+CREATE VIEW cust_analysis_1 AS
+SELECT cust.Customer_FirstName || ' ' || cust.Customer_LastName "Customer Name",
+'(' || SUBSTR (cust.Customer_PhoneNumber,1, 3) || ')' || 
+SUBSTR (cust.Customer_PhoneNumber, 4, 3) || '-' ||
+SUBSTR (cust.Customer_PhoneNumber, 7, 4) "Customer Phone",
+'Number of items purchased: ' || COUNT (sal.SalesInvoice_ID) "Number of Artwork Pieces Purchased"
+FROM Customer cust
+JOIN Sales_Invoice sal ON cust.Customer_ID = sal.Customer_ID
+GROUP BY cust.Customer_FirstName || ' ' || cust.Customer_LastName,
+'(' || SUBSTR (cust.Customer_PhoneNumber,1, 3) || ')' || 
+SUBSTR (cust.Customer_PhoneNumber, 4, 3) || '-' ||
+SUBSTR (cust.Customer_PhoneNumber, 7, 4)
+ORDER BY COUNT (sal.SalesInvoice_ID) DESC;
+
+
+-- CUSTOMER ANALYSIS QUERY #2
+
+CREATE VIEW cust_analysis_2 AS
+SELECT cust.Customer_FirstName || ' ' || cust.Customer_LastName "Customer Name (has purchased artwork and a service)",
+'(' || SUBSTR (cust.Customer_PhoneNumber,1, 3) || ')' || 
+SUBSTR (cust.Customer_PhoneNumber, 4, 3) || '-' ||
+SUBSTR (cust.Customer_PhoneNumber, 7, 4) "Customer Phone Number"
+FROM Customer cust
+WHERE cust.Customer_ID IN 
+(SELECT servin.Customer_ID FROM Service_Invoice servin)
+AND cust.Customer_ID IN 
+(SELECT sal.Customer_ID FROM Sales_Invoice sal)
+ORDER BY cust.Customer_LastName ASC;
+
+
+-- CUSTOMER ANALYSIS QUERY #3
+
+CREATE VIEW cust_analysis_3 AS
+SELECT 'Art Purchase Only Customers: ' || COUNT (DISTINCT cust.Customer_ID) "Number of Sole Art Customers"
+FROM Customer cust
+WHERE cust.Customer_ID IN (SELECT servin.Customer_ID FROM Service_Invoice servin);
+
+
+-- CUSTOMER ANALYSIS QUERY #4
+
+CREATE VIEW cust_analysis_4 AS
+SELECT cust.Customer_FirstName || ' ' || cust.Customer_LastName "Customer Name",
+'(' || SUBSTR (cust.Customer_PhoneNumber,1, 3) || ')' || 
+SUBSTR (cust.Customer_PhoneNumber, 4, 3) || '-' ||
+SUBSTR (cust.Customer_PhoneNumber, 7, 4) "Customer Phone"
+FROM Customer cust
+WHERE Customer_ID IN (SELECT pref.Customer_ID FROM Preferences pref
+WHERE pref.Preference_EndDate >= SYSDATE OR pref.Preference_EndDate IS NULL);
+
+
+-- CUSTOMER ANALYSIS QUERY #5
+
+CREATE VIEW cust_analysis_5 AS
+SELECT cust.Customer_FirstName || ' ' || cust.Customer_LastName "Customer Name",
+'(' || SUBSTR (cust.Customer_PhoneNumber,1, 3) || ')' || 
+SUBSTR (cust.Customer_PhoneNumber, 4, 3) || '-' ||
+SUBSTR (cust.Customer_PhoneNumber, 7, 4) "Customer Phone"
+FROM Customer cust
+WHERE cust.Customer_ID IN (SELECT sal.Customer_ID FROM Sales_Invoice sal WHERE sal.Warranty_ID IS NULL)
+ORDER BY cust.Customer_LastName ASC;
+
+
+-- CUSTOMER ANALYSIS QUERY #6
+
+CREATE VIEW cust_analysis_6 AS
+SELECT cust.Customer_FirstName || ' ' || cust.Customer_LastName "Highest Volume Customer",
+'Number of purchases: ' ||
+COUNT(sal.Customer_ID) "Number of purchases made"
+FROM Sales_Invoice sal, Customer cust
+WHERE sal.Customer_ID = cust.Customer_ID
+GROUP BY cust.Customer_FirstName || ' ' || cust.Customer_LastName
+ORDER BY COUNT(sal.Customer_ID) DESC
+FETCH FIRST 1 ROWS ONLY;
+
+
+-- CUSTOMER ANALYSIS QUERY #7
+
+CREATE VIEW cust_analysis_7 AS
+SELECT 'Highest profit client: ' || cust.Customer_FirstName || ' ' || 
+cust.Customer_LastName "Customer Name",
+TO_CHAR (SUM ((sal.Sales_Price - sal.Sales_Discount - purch.Purchase_Price)), '$999,999,999.99') "Net Profit on Sales"
+FROM Customer cust
+JOIN Sales_Invoice sal ON cust.Customer_ID = sal.Customer_ID
+JOIN Purchase_Agreement purch ON sal.Item_Sold_ID = purch.Purchased_ItemID
+GROUP BY 'Highest profit client: ' || cust.Customer_FirstName || ' ' || cust.Customer_LastName
+ORDER BY SUM ((sal.Sales_Price - sal.Sales_Discount - purch.Purchase_Price)) DESC
+FETCH FIRST 1 ROWS ONLY;
+
+
+-- ART SALES ANALYSIS QUERY #1
+
+CREATE VIEW art_sale_analysis_1 AS
+SELECT 'Number of Items Sold: ' || COUNT(*) "Works of Art Sold"
+FROM Artwork_Item_Sale
+WHERE Item_Status = 'SOLD';
+
+
+-- ART SALES ANALYSIS QUERY #2
+
+CREATE VIEW art_sale_analysis_2 AS
+SELECT Item_ArtCategory "Art Category", COUNT(*) "Works of Art Sold"
+FROM Artwork_Item_Sale
+WHERE Item_Status = 'SOLD'
+GROUP BY Item_ArtCategory;
+
+
+-- ART SALES ANALYSIS QUERY #3
+
+CREATE VIEW art_sale_analysis_3 AS
+SELECT 'Total value of items on hand: ' || TO_CHAR (SUM(purch.Purchase_Price), '$999,999,999.99') "Value of Art on Hand"
+FROM Artwork_Item_Sale itmsale 
+JOIN Purchase_Agreement purch ON purch.Purchased_ItemID = itmsale.Item_ID
+WHERE itmsale.Item_Status = 'FORSALE' 
+AND itmsale.Item_How_Acquired = 'PURCHASE';
+
+
+-- ART SALES ANALYSIS QUERY #4
+
+CREATE VIEW art_sale_analysis_4 AS
+SELECT itmsale.Item_ID "Item ID", itmsale.Item_ArtCategory "Art Category", itmsale.Item_Title "Title", itmsale.Item_Status "Item Status", TO_CHAR(itmsale.Item_Suggested_List_Price, '$999,999,999.99') "Proposed Selling Price "
+FROM Artwork_Item_Sale itmsale 
+JOIN Consignment_Agreement cons ON cons.Consigned_ItemID = itmsale.Item_ID
+WHERE cons.Consignment_EndDate > SYSDATE OR Consignment_EndDate IS NULL;
+
+
+-- ART SALES ANALYSIS QUERY #5
+
+CREATE VIEW art_sale_analysis_5 AS
+SELECT 'Total Commissions from Consignment: ' || TO_CHAR (SUM((sal.Sales_Price-sal.Sales_Discount)*(cons.Consignment_Commission/100)), '$999,999,999.99') "Total Money Made By Consignment Sales"
+FROM Sales_Invoice sal 
+JOIN Consignment_Agreement cons ON cons.Consigned_ItemID = sal.Item_Sold_ID;
+
+
+-- ART SERVICE ANALYSIS QUERY #1
+
+CREATE VIEW art_serv_analysis_1 AS
+SELECT 'Number of services offered last month: ' || COUNT (servin.Service_Invoice_ID) "Services Offered Last Month"
+FROM Service_Invoice servin
+WHERE servin.Service_Invoice_Date >= (SYSDATE - 30)
+AND servin.Service_Invoice_Date <= SYSDATE;
+
+
+-- ART SERVICE ANALYSIS QUERY #2
+
+CREATE VIEW art_serv_analysis_2 AS
+SELECT TO_CHAR (SUM (serv.Service_Price) - SUM (serv.Service_Cost), '$999,999,999.99') "Total Profit on Services"
+FROM Service_Invoice servin
+JOIN Service serv ON servin.Service_ID = serv.Service_ID;
+
+
+-- ART SERVICE ANALYSIS QUERY #3
+
+CREATE VIEW art_serv_analysis_3 AS
+SELECT serv.Service_Description "Service Type",
+TO_CHAR (SUM (serv.Service_Price), '$999,999,999.99') "Total Price of Services", 
+TO_CHAR (SUM (serv.Service_Cost), '$999,999,999.99') "Total Cost of Services",
+TO_CHAR (SUM (serv.Service_Price) - SUM (serv.Service_Cost), '$999,999,999.99') "Total Profit of Services"
+FROM Service_Invoice servin
+JOIN Service serv ON servin.Service_ID = serv.Service_ID
+GROUP BY serv.Service_Description;
+
+
+-- ART SERVICE ANALYSIS QUERY #4
+
+CREATE VIEW art_serv_analysis_4 AS
+SELECT serv.Service_Description "Service Type",
+TO_CHAR (SUM (serv.Service_Price) - SUM (serv.Service_Cost), '$999,999,999.99') "Total Profit of Services"
+FROM Service_Invoice servin
+JOIN Service serv ON servin.Service_ID = serv.Service_ID
+GROUP BY serv.Service_Description
+ORDER BY SUM (serv.Service_Price) - SUM (serv.Service_Cost) DESC
+FETCH FIRST 1 ROWS ONLY;
+
+
+-- PROFIT / EMPLOYEE ANALYSIS QUERY #1
+
+CREATE VIEW profit_emp_analysis_1 AS
+SELECT emp.Employee_FirstName || ' ' || emp.Employee_LastName "Top Performing Salesperson",
+COUNT (sal.Salesperson_ID) "Number of Items Sold"
+FROM Employee emp, Sales_Invoice sal
+WHERE emp.Employee_ID = sal.Salesperson_ID
+GROUP BY emp.Employee_FirstName || ' ' || emp.Employee_LastName
+ORDER BY COUNT (sal.Salesperson_ID) DESC
+FETCH FIRST 1 ROWS ONLY;
+
+
+-- PROFIT / EMPLOYEE ANALYSIS QUERY #2
+
+CREATE VIEW profit_emp_analysis_2 AS
+SELECT emp.Employee_FirstName || ' ' || emp.Employee_LastName "Salesperson Name",
+TO_CHAR (SUM(sal.Sales_Price * (emp.Sales_Commission/100)), '$999,999,999.99') "Total Commissions"
+FROM Sales_Invoice sal
+JOIN Employee emp ON emp.Employee_ID = sal.Salesperson_ID
+GROUP BY emp.Employee_FirstName || ' ' || emp.Employee_LastName
+ORDER BY SUM(sal.Sales_Price * (emp.Sales_Commission/100)) DESC
+FETCH FIRST 1 ROWS ONLY;
+
+
+-- PROFIT / EMPLOYEE ANALYSIS QUERY #3
+
+CREATE VIEW profit_emp_analysis_3 AS
+SELECT emp.Employee_FirstName || ' ' || emp.Employee_LastName "Salesperson Name",
+TO_CHAR (sal.Sales_Price * (emp.Sales_Commission/100), '$999,999,999.99') "Highest Commission on Single Item"
+FROM Sales_Invoice sal
+JOIN Employee emp ON emp.Employee_ID = sal.Salesperson_ID
+ORDER BY sal.Sales_Price * (emp.Sales_Commission/100) DESC
+FETCH FIRST 1 ROWS ONLY;
