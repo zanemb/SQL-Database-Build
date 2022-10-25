@@ -1,4 +1,4 @@
--- Zane Mazor-Brown & Ivan Dikov
+-- Authored by Zane Mazor-Brown & Ivan Dikov
 -- Combined scripts from tasks 1-6
 
 DROP TABLE Customer CASCADE CONSTRAINTS PURGE;
